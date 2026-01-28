@@ -1,0 +1,25 @@
+
+
+.card {
+  background-color: #f3f4f6;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 0.2rem 0.5rem rgb(0 0 0 / 50%);
+  overflow: hidden;
+}
+
+.card2 {
+  background-color: #f8fafc;
+    padding: 0.8rem;
+    border-radius: 0.4rem;
+    box-shadow: 0 0.1rem 0.2rem rgb(0 0 0 / 50%);
+    overflow: hidden;
+}
+
+.card4 {
+  background-color: #242832;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  box-shadow: 0 0.1rem 0.2rem rgb(0 0 0 / 50%);
+  overflow: hidden;
+}

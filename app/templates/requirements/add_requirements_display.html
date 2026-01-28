@@ -1,0 +1,43 @@
+<div class="vertical-list card">
+  <strong> <span>Ajouter Requirements</span> </strong>
+  {% for req in requirements_to_add %}
+  <div class="row card2">
+    <img class="req-img" src="{{ url_for('static', filename='images/requirements/'+req.id|string+'.png') }}"
+         alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
+    <div class="vertical-list ">
+      <div class="row">
+      <span><strong>{{ req.name}}</strong> </span>
+      <span>{{ req.description }}</span>
+      </div>
+
+      <form class="vertical-list" action="{{ url_for('add_requirement_to_ci') }}" method="POST">
+        <input type="hidden" name="id" value="{{ req.id }}">
+        <input type="hidden" name="ci_id" value="{{ ci.ci_id }}">
+
+        <div class="row">
+          <label for="quantity-{{ loop.index }}">Quantity</label>
+          <input class="qty-input" type="number" id="quantity-{{ loop.index }}" name="quantity" value="">
+        </div>
+        <div class="min-size">
+          <button class="success" type="submit" disabled>
+            <i class="pi pi-file-plus"></i> Ajouter
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  document.querySelectorAll('.qty-input').forEach(input => {
+    const form = input.closest('form');
+    const button = form.querySelector('.btn-add');
+
+    input.addEventListener('input', () => {
+      button.disabled = (input.value.trim() === "");
+    });
+  });
+</script>
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css">
+</head>
+<body>
+<div class="pad">
+    <div class="card vertical-list">
+
+        <strong><span>Ajouter ou supprimer des requirements</span></strong>
+
+        <form action="{{ url_for('index') }}">
+            <button class="primary" type="submit">
+                <i class="pi pi-directions-alt"></i> Retour
+            </button>
+        </form>
+
+    </div>
+</div>
+    <div class="vertical-grid-big-left">
+        {% include "requirements/requirements_display.html" %}
+
+        {% include "requirements/create_requirement.html" %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css">
+</head>
+<body>
+    <div class="pad">
+      <div class="card vertical-list">
+
+          {% if is_created %}
+          <strong><span>Créer un nouveau CI</span></strong>
+          {% else %}
+          <strong><span>Modifier le CI {{ci.name}}</span></strong>
+          {% endif %}
+
+          <div class="space">
+              <form action="{{ url_for('index') }}">
+                  <button class="primary" type="submit">
+                      <i class="pi pi-directions-alt"></i> Retour
+                  </button>
+              </form>
+              {% if is_created %}
+              {% else %}
+              <form action="{{ url_for('index') }}">
+                  <button class="danger" type="submit">
+                      <i class="pi pi-trash"></i> Supprimer CI
+                  </button>
+              </form>
+              {% endif %}
+
+          </div>
+          {% if is_created %}
+          <form class="vertical-list" action="{{ url_for('add_created_ci') }}" method="POST">
+              <div class="row">
+                  <label for="name">Nom</label>
+                  <input id="name" name="name" value="">
+              </div>
+              <div class="row">
+                  <label for="description">Description</label>
+                  <input id="description" name="description" value="">
+              </div>
+              <div class="min-size">
+              <button class="success" type="submit">
+                  <i class="pi pi-check-circle"></i> Créer le CI
+              </button>
+              </div>
+          </form>
+          {% else %}
+          <span> <strong>{{ ci.name }}</strong></span>
+          <span> {{ ci.description }}</span>
+          {% endif %}
+      </div>
+    </div>
+  <div class="vertical-grid">
+      <div>
+          {% include "requirements/requirements_display.html" %}
+      </div>
+
+      <div class="vertical-list">
+          {% include "requirements/create_requirement.html" %}
+          {% include "requirements/add_requirements_display.html" %}
+      </div>
+
+  </div>
+
+</body>
+</html>

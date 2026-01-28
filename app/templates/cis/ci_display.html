@@ -1,0 +1,28 @@
+
+<div class="card vertical-list">
+
+    <div class="space">
+        <span><strong>Liste des CI</strong></span>
+        <form action="{{url_for('create_ci')}}">
+            <button class="success" type="submit">
+                <i class="pi pi-file-plus"></i> Créer un CI
+            </button>
+        </form>
+    </div>
+    <div class="vertical-grid-3 ">
+        {% for ci in ci_list %}
+            <div class="card2 vertical-list mini-gap">
+                <form action="{{ url_for('add_ci') }}" method="POST">
+                    <input type="hidden" name="ci_id" value="{{ ci.ci_id }}">
+                    <button type="submit" style="border: none; background: none; padding: 0;">
+                        <img class="max-img" src="{{ url_for('static', filename='images/cis/'+ci.ci_id|string+'.png') }}"
+                             alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
+                    </button>
+                </form>
+                <a href="{{url_for('manage_ci', ci_id=ci.ci_id)}}" ><span>{{ci.name}}</span></a>
+                <span>{{ ci.description }}</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+

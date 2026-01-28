@@ -1,0 +1,40 @@
+button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  border: none;
+
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  background: #e5e7eb;
+  color: #374151;
+
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background: #d1d5db;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.primary { background: #3b82f6; color: white; }
+button.danger  { background: #ef4444; color: white; }
+button.success { background: #22c55e; color: white; }
+
+button:disabled {
+    opacity: 0.5;          /* rend le bouton plus clair */
+    cursor: not-allowed;   /* montre qu'il est non cliquable */
+  }
+
+button.primary:hover { background: #2563eb; }
+button.danger:hover  { background: #dc2626; }
+button.success:hover { background: #16a34a; }

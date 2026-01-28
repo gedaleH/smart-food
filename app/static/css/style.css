@@ -1,0 +1,86 @@
+body {
+  background-color: #d1fae5; /* vert pastel */
+  color: #111827;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.pad {
+    padding: 1rem;
+    padding-bottom: 0rem;
+}
+
+.vertical-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 50/50 */
+  gap: 1rem; /* espace entre les colonnes et les lignes */
+  padding: 1rem;
+}
+
+.vertical-grid-big-left {
+  display: grid;
+  grid-template-columns: 10fr 4fr; /* 50/50 */
+  gap: 1rem; /* espace entre les colonnes et les lignes */
+  padding: 1rem;
+}
+
+
+.vertical-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 50/50 */
+  gap: 1rem; /* espace entre les colonnes et les lignes */
+}
+
+.vertical-grid-6 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 50/50 */
+  gap: 1rem; /* espace entre les colonnes et les lignes */
+}
+
+.row {
+  display: flex;
+    gap: 10px;           /* espace entre les éléments */
+    align-items: center;     /* centre verticalement */
+}
+
+.vertical-list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* affiche en vertical */
+  gap: 1rem;              /* espace entre les éléments */
+}
+
+.no-gap {
+    gap: 0rem;
+}
+
+.mini-gap {
+    gap: 0.2rem;
+}
+
+min-size {
+    height = 0%;
+    width = 0%;
+}
+
+.req-img {
+  width: auto;
+  height: 5rem;
+}
+
+.max-img {
+  width: 100%;
+  height: auto;
+}
+
+.space {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
