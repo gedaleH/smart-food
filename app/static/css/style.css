@@ -19,7 +19,7 @@ body {
 
 .vertical-grid-big-left {
   display: grid;
-  grid-template-columns: 10fr 4fr; /* 50/50 */
+  grid-template-columns: 10fr 2fr; /* 50/50 */
   gap: 1rem; /* espace entre les colonnes et les lignes */
   padding: 1rem;
 }
@@ -31,11 +31,12 @@ body {
   gap: 1rem; /* espace entre les colonnes et les lignes */
 }
 
-.vertical-grid-6 {
+.vertical-grid-8 {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 50/50 */
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; /* 50/50 */
   gap: 1rem; /* espace entre les colonnes et les lignes */
 }
+
 
 .row {
   display: flex;
@@ -67,6 +68,11 @@ min-size {
 .req-img {
   width: auto;
   height: 5rem;
+}
+
+.manage-ci-img {
+  width: auto;
+  height: 10rem;
 }
 
 .max-img {

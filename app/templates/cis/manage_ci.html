@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Gestion d'une recette</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css">
 </head>
@@ -11,60 +11,81 @@
       <div class="card vertical-list">
 
           {% if is_created %}
-          <strong><span>Créer un nouveau CI</span></strong>
+          <strong><span>Créer une nouvelle recette</span></strong>
+          <form action="{{ url_for('delete_ci') }}" method="POST">
+              <input type="hidden" name="ci_id" value="{{ ci.id }}">
+              <button class="danger" type="submit">
+                  <i class="pi pi-trash"></i> Annuler
+              </button>
+          </form>
           {% else %}
-          <strong><span>Modifier le CI {{ci.name}}</span></strong>
-          {% endif %}
-
+          <strong><span>Modifier la recette {{ci.name}}</span></strong>
           <div class="space">
               <form action="{{ url_for('index') }}">
                   <button class="primary" type="submit">
                       <i class="pi pi-directions-alt"></i> Retour
                   </button>
               </form>
-              {% if is_created %}
-              {% else %}
-              <form action="{{ url_for('index') }}">
+
+              <form action="{{ url_for('delete_ci') }}" method="POST">
+                  <input type="hidden" name="ci_id" value="{{ ci.id }}">
                   <button class="danger" type="submit">
-                      <i class="pi pi-trash"></i> Supprimer CI
+                      <i class="pi pi-trash"></i> Supprimer recette
                   </button>
               </form>
-              {% endif %}
 
           </div>
-          {% if is_created %}
-          <form class="vertical-list" action="{{ url_for('add_created_ci') }}" method="POST">
-              <div class="row">
-                  <label for="name">Nom</label>
-                  <input id="name" name="name" value="">
-              </div>
-              <div class="row">
-                  <label for="description">Description</label>
-                  <input id="description" name="description" value="">
-              </div>
-              <div class="min-size">
-              <button class="success" type="submit">
-                  <i class="pi pi-check-circle"></i> Créer le CI
-              </button>
-              </div>
-          </form>
-          {% else %}
-          <span> <strong>{{ ci.name }}</strong></span>
-          <span> {{ ci.description }}</span>
           {% endif %}
+
+
+        <div class="row">
+            <img class="manage-ci-img" src="{{ url_for('static', filename='images/cis/'+ci.id|string+'.png') }}"
+                 alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
+            <form class="vertical-list" action="{{ url_for('define_created_ci') }}" method="POST">
+                <div class="row">
+                    <label for="name">Nom</label>
+                    <input id="name" name="name" value="{{ ci.name }}">
+                </div>
+                <div class="row">
+                    <label for="description">Description</label>
+                    <input id="description" name="description" value="{{ ci.description }}">
+                </div>
+                <input type="hidden" name="ci_id" value="{{ ci.id }}">
+                <div class="min-size">
+                    <button
+                            class="{% if is_created %}
+                            success
+                            {% else %}
+                            primary
+                            {% endif %}"
+                            type="submit">
+                        <i class="pi pi-check-circle"></i>
+                        {% if is_created %}
+                        Créer la recette
+                        {% else %}
+                        Modifier nom/description
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
       </div>
     </div>
-  <div class="vertical-grid">
-      <div>
-          {% include "requirements/requirements_display.html" %}
-      </div>
 
-      <div class="vertical-list">
-          {% include "requirements/create_requirement.html" %}
-          {% include "requirements/add_requirements_display.html" %}
-      </div>
+    {% if is_created %}
+    {% else %}
+    <div class="pad">
+        {% include "requirements/requirements_display.html" %}
+    </div>
 
-  </div>
+    <div class="vertical-grid-big-left">
+        {% include "requirements/add_requirements_display.html" %}
+        {% include "propositions/create_proposition.html" %}
+
+
+    </div>
+    {% endif %}
+
 
 </body>
 </html>

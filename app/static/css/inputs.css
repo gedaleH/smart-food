@@ -1,9 +1,13 @@
+
 input {
-  padding: 0.6rem 0.8rem;
-  border-radius: 8px;
+  width: 100%;              /* prend toute la largeur */
+  max-width: 20rem;
+  box-sizing: border-box;
+  padding: 0.35rem 0.6rem;  /* moins haut */
+  border-radius: 6px;       /* un peu plus fin */
   border: 1px solid #d1d5db;
 
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   outline: none;
 
   transition: border-color 0.2s ease, box-shadow 0.2s ease;

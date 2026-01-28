@@ -10,6 +10,7 @@ class Requirement(db.Model):
     name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, default="")
+    proposition_id = db.Column(db.Integer, nullable=False)
 
     ci_id = db.Column(db.Integer, db.ForeignKey("cis.id"), nullable=True)
 
@@ -25,6 +26,9 @@ class Proposition(db.Model):
 
     def __repr__(self):
         return f"<Poposition {self.name}>"
+
+    def to_requirement(self, quantity : int):
+        return Requirement(name=self.name, description=self.description, quantity=quantity, proposition_id=self.id)
 
 class Ci(db.Model):
     __tablename__ = "cis"

@@ -1,0 +1,65 @@
+<div class="min-size">
+<form class="vertical-list card"
+      action="{{ url_for('create_proposition_and_add_requirement_to_ci') if is_from_ci else url_for('create_proposition') }}"
+      method="POST">
+
+    {% if is_from_ci %}
+    <span><strong>Créer un aliment et ajouter comme ingrédient</strong></span>
+    {% else %}
+    <span><strong>Créer un aliment</strong></span>
+    {% endif %}
+
+    <div class="vertical-list mini-gap">
+        <label for="name">Nom</label>
+        <input type="text" id="name" name="name" value="">
+    </div>
+
+    <div class="vertical-list mini-gap">
+        <label for="description">Description</label>
+        <input id="description" name="description" value="">
+    </div>
+
+    {% if is_from_ci %}
+    <input type="hidden" name="ci_id" value="{{ ci.id }}">
+    <div class="vertical-list mini-gap">
+        <label for="quantity">Quantité (g)</label>
+        <input type="number" id="quantity" name="quantity" value="">
+    </div>
+    <input type="hidden" name="is_created" value="{{ is_created }}">
+    {% endif %}
+    <div class="min-size">
+        <button class="primary" type="submit" disabled>
+            <i class="pi pi-check-circle"></i>Créer aliment
+        </button>
+    </div>
+</form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      document.querySelectorAll('form.vertical-list').forEach(form => {
+
+        const nameInput = form.querySelector('#name');
+        const quantityInput = form.querySelector('#quantity');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        if (!nameInput || !submitBtn) return;
+
+        function checkForm() {
+          const nameOk = nameInput.value.trim() !== "";
+          const quantityOk = !quantityInput || quantityInput.value.trim() !== "";
+          submitBtn.disabled = !(nameOk && quantityOk);
+        }
+
+        // état initial
+        checkForm();
+
+        nameInput.addEventListener('input', checkForm);
+        if (quantityInput) {
+          quantityInput.addEventListener('input', checkForm);
+        }
+      });
+
+    });
+</script>

@@ -1,10 +1,10 @@
  <div class="vertical-list card">
-   <strong> <span>Requirements</span> </strong>
-   <div class="vertical-grid-6">
+   <strong> <span>Ingrédients</span> </strong>
+   <div class="vertical-grid-8">
       {% for req in requirements %}
         <div class="vertical-list card2">
           <div class="min-size center">
-            <img class="req-img" src="{{ url_for('static', filename='images/requirements/'+req.id|string+'.png') }}"
+            <img class="req-img" src="{{ url_for('static', filename='images/requirements/'+req.proposition_id|string+'.png') }}"
                  alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
           </div>
           <div class="vertical-list mini-gap">
@@ -15,15 +15,16 @@
 
             {% if is_from_ci %}
             <span><strong>Quantité :</strong> {{ req.quantity }}g</span>
-            <form action="{{ url_for('delete_requirement_from_ci') }}" method="POST">
-              <input type="hidden" name="ci_id" value="{{ ci.ci_id }}">
-              <input type="hidden" name="id" value="{{ req.id }}">
+            <form action="{{ url_for('remove_requirement_from_ci') }}" method="POST">
+              <input type="hidden" name="ci_id" value="{{ ci.id }}">
+              <input type="hidden" name="req_id" value="{{ req.id }}">
+              <input type="hidden" name="is_created" value="{{ is_created }}">
               <button class="danger" type="submit" > <i class="pi pi-trash"></i>Supprimer
               </button>
             </form>
             {% else %}
-            <form action="{{ url_for('delete_requirement') }}" method="POST">
-              <input type="hidden" name="id" value="{{ req.id }}">
+            <form action="{{ url_for('delete_proposition') }}" method="POST">
+              <input type="hidden" name="req_id" value="{{ req.id }}">
               <button class="danger" type="submit" > <i class="pi pi-trash"></i>Supprimer
               </button>
             </form>

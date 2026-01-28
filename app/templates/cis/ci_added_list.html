@@ -1,23 +1,16 @@
 
   <div class="card vertical-list">
-    <span><strong>CI ajoutés à la liste</strong></span>
+    <span><strong>Recettes ajoutées à la liste</strong></span>
     <div class="vertical-grid-3 ">
 
     {% for ci in ci_added_list %}
     <div class="card2 vertical-list mini-gap">
-      <form action="{{ url_for('add_ci') }}" method="POST">
-        <input type="hidden" name="ci_id" value="{{ ci.ci_id }}">
-        <button type="submit" style="border: none; background: none; padding: 0;">
-          <img class="max-img" src="{{ url_for('static', filename='images/cis/'+ci.ci_id|string+'.png') }}"
-               alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
-
-        </button>
-      </form>
-      <a href="{{url_for('manage_ci', ci_id=ci.ci_id)}}" ><span>{{ci.name}}</span></a>
-      <span>{{ ci.description }}</span>
+      <img class="max-img" src="{{ url_for('static', filename='images/cis/'+ci.id|string+'.png') }}"
+           alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
+      <span><strong>{{ci.name}}</strong></span>
       <form action="{{ url_for('remove_ci_from_list') }}" method="POST">
-        <input type="hidden" name="ci_id" value="{{ ci.ci_id }}">
-          <button class="danger" type="submit" > <i class="pi pi-trash"></i>Supprimer
+        <input type="hidden" name="ci_id" value="{{ ci.id }}">
+          <button class="danger" type="submit" > <i class="pi pi-directions-alt"></i>Retirer de la liste
         </button>
       </form>
     </div>

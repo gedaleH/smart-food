@@ -1,12 +1,8 @@
-import random
-from copy import copy
-
 from flask import Flask, render_template, request, redirect, url_for
 
-from app.models.models import db, Proposition
+from app.models.models import db, Proposition, Ci, Requirement
 from app.services.image_download_service import generate_image_for_req, generate_image_for_ci
 from app.services.requirement_list_service import generate_list_from_cis
-from app.models.rcp import ci_set, Ci, requirement_set, Requirement
 
 from flask_migrate import Migrate
 
@@ -19,46 +15,51 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
-ci_added_list : set[Ci] = set()
-requirement_list = generate_list_from_cis(ci_added_list)
+ci_added_id_list : set[int] = set()
+requirement_list = []
 
-created_ci : Ci = Ci("Nouveau CI", [], 0, "Description du CI")
 
 @app.route('/')
 def index():
-    return render_template('index.html', ci_list=ci_set, ci_added_list=ci_added_list, requirement_list=requirement_list)
+    ci_added_list = db.session.query(Ci).filter(Ci.id.in_(ci_added_id_list)).all()
+    all_cis = db.session.query(Ci).all()
+    return render_template('index.html', ci_list=all_cis, ci_added_list=ci_added_list, requirement_list=requirement_list)
 
-@app.route('/manage_requirements')
-def manage_requirements():
+@app.route('/manage_propositions')
+def manage_propositions():
     propositions = db.session.query(Proposition).all()
-    return render_template('requirements/manage_requirements.html',
-                           requirements=propositions,
+    return render_template('propositions/manage_propositions.html',
+                           propositions=propositions,
                            is_from_ci=False)
 
 @app.route('/manage_ci/<int:ci_id>')
 def manage_ci(ci_id):
-    ci_displayed : Ci = next(ci for ci in ci_set if ci.ci_id == ci_id)
+    ci = db.session.get(Ci, ci_id)
+    propositions = db.session.query(Proposition).all()
     return render_template('cis/manage_ci.html',
-                           ci=ci_displayed,
-                           requirements=ci_displayed.requirements,
-                           requirements_to_add=requirement_set,
+                           ci=ci,
+                           requirements=ci.requirements,
+                           propositions=propositions,
                            is_from_ci=True,
                            is_created=False)
 
 @app.route('/create_ci')
 def create_ci():
+    created_ci : Ci = Ci(name="Nouvelle recette", description="")
+    db.session.add(created_ci)
+    db.session.commit()
+    propositions = db.session.query(Proposition).all()
     return render_template('cis/manage_ci.html',
                            ci=created_ci,
                            requirements=created_ci.requirements,
-                           requirements_to_add=requirement_set,
+                           propositions=propositions,
                            is_from_ci=True,
                            is_created=True)
 
-@app.route("/add_ci", methods=["POST"])
-def add_ci():
+@app.route("/add_ci_to_list", methods=["POST"])
+def add_ci_to_list():
     ci_id = int(request.form["ci_id"])
-    ci_to_add = next(ci for ci in ci_set if ci.ci_id == ci_id)
-    ci_added_list.add(ci_to_add)
+    ci_added_id_list.add(ci_id)
 
     update_list()
 
@@ -67,24 +68,32 @@ def add_ci():
 @app.route("/remove_ci_from_list", methods=["POST"])
 def remove_ci_from_list():
     ci_id = int(request.form["ci_id"])
-    ci_to_del = next(ci for ci in ci_set if ci.ci_id == ci_id)
-    ci_added_list.discard(ci_to_del)
+    ci_added_id_list.discard(ci_id)
 
     update_list()
 
     return redirect(url_for("index"))
 
-@app.route("/delete_requirement", methods=["POST"])
-def delete_requirement():
+@app.route("/delete_proposition", methods=["POST"])
+def delete_proposition():
 
-    proposition_to_delete = Proposition.query.get(int(request.form["id"]))  # récupère l'élément avec id = 1
+    proposition_to_delete = Proposition.query.get(int(request.form["prop_id"]))
     db.session.delete(proposition_to_delete)
     db.session.commit()
 
-    return redirect(url_for("manage_requirements"))
+    return redirect(url_for("manage_propositions"))
 
-@app.route("/create_requirement", methods=["POST"])
-def create_requirement():
+@app.route("/delete_ci", methods=["POST"])
+def delete_ci():
+
+    ci_to_delete = db.session.get(Ci, int(request.form["ci_id"]))
+    db.session.delete(ci_to_delete)
+    db.session.commit()
+
+    return redirect(url_for("index"))
+
+@app.route("/create_proposition", methods=["POST"])
+def create_proposition():
 
     name = request.form["name"]
     description = request.form["description"]
@@ -95,103 +104,92 @@ def create_requirement():
 
     generate_image_for_req(name,proposition.id)
 
-    return (redirect(url_for("manage_requirements")))
+    return (redirect(url_for("manage_propositions")))
 
 
 @app.route("/add_requirement_to_ci", methods=["POST"])
 def add_requirement_to_ci():
-    req_id = int(request.form["req_id"])
-    req_to_add = next(req for req in requirement_set if req.req_id == req_id)
 
     quantity = int(request.form["quantity"])
-    req_to_add.quantity = quantity
+    prop_id = int(request.form["prop_id"])
+    requirement_to_add : Requirement = Proposition.query.get(prop_id).to_requirement(quantity)
 
     ci_id = int(request.form["ci_id"])
-    if ci_id != 0 :
-        ci_to_modify = next(ci for ci in ci_set if ci.ci_id == ci_id)
-    else:
-        ci_to_modify = created_ci
+    ci_to_modify = Ci.query.get(ci_id)
 
-    ci_to_modify.requirements = [req for req in copy(ci_to_modify.requirements) if req.req_id != req_id]
-    ci_to_modify.requirements.append(req_to_add)
+    ci_to_modify.requirements.append(requirement_to_add)
+
+    db.session.commit()
 
     update_list()
 
-    if ci_id != 0 :
-        return redirect(url_for("manage_ci", ci_id=ci_id))
-    return redirect(url_for("create_ci"))
+    return redirect(url_for("manage_ci", ci_id=ci_id))
 
-@app.route("/delete_requirement_from_ci", methods=["POST"])
-def delete_requirement_from_ci():
+@app.route("/remove_requirement_from_ci", methods=["POST"])
+def remove_requirement_from_ci():
+
     req_id = int(request.form["req_id"])
-
     ci_id = int(request.form["ci_id"])
 
-    if ci_id != 0 :
-        ci_to_modify = next(ci for ci in ci_set if ci.ci_id == ci_id)
-    else:
-        ci_to_modify = created_ci
-
-    ci_to_modify.requirements = [req for req in copy(ci_to_modify.requirements) if req.req_id != req_id]
-
+    requirement_to_delete = Requirement.query.get(req_id)
+    db.session.delete(requirement_to_delete)
+    db.session.commit()
 
     update_list()
 
-    if ci_id != 0 :
-        return redirect(url_for("manage_ci", ci_id=ci_id))
-    return redirect(url_for("create_ci"))
+    return redirect(url_for("manage_ci", ci_id=ci_id))
 
-@app.route("/create_requirement_from_ci", methods=["POST"])
-def create_requirement_from_ci():
-    req_id = random.randint(50, 7000)
+@app.route("/create_proposition_and_add_requirement_to_ci", methods=["POST"])
+def create_proposition_and_add_requirement_to_ci():
+
     name = request.form["name"]
-    quantity = 0
-    generate_image_for_req(name,req_id)
-    description = request.form["description"] or None
-    requirement = Requirement(req_id=req_id, name=name, quantity=quantity, description=description)
-    requirement_set.add(requirement)
+    description = request.form["description"]
 
-    req_to_add = next(req for req in requirement_set if req.req_id == req_id)
+    proposition = Proposition(name=name, description=description)
+    db.session.add(proposition)
+    db.session.commit()
+
+    prop_id = proposition.id
+    generate_image_for_req(name, prop_id)
 
     quantity = int(request.form["quantity"])
-    req_to_add.quantity = quantity
+    requirement_to_add : Requirement = Proposition.query.get(prop_id).to_requirement(quantity)
 
     ci_id = int(request.form["ci_id"])
-    if ci_id != 0 :
-        ci_to_modify = next(ci for ci in ci_set if ci.ci_id == ci_id)
-    else:
-        ci_to_modify = created_ci
+    ci_to_modify = Ci.query.get(ci_id)
 
-    ci_to_modify.requirements = [req for req in copy(ci_to_modify.requirements) if req.req_id != req_id]
-    ci_to_modify.requirements.append(req_to_add)
+    ci_to_modify.requirements.append(requirement_to_add)
+
+    db.session.commit()
 
     update_list()
 
-    if ci_id != 0 :
-        return redirect(url_for("manage_ci", ci_id=ci_id))
-    return redirect(url_for("create_ci"))
+    return redirect(url_for("manage_ci", ci_id=ci_id))
 
-@app.route("/add_created_ci", methods=["POST"])
-def add_created_ci():
-    ci_id = random.randint(50, 7000)
-    created_ci.ci_id = ci_id
 
-    name = request.form["name"]
+@app.route("/define_created_ci", methods=["POST"])
+def define_created_ci():
+
+    ci_id = request.form["ci_id"]
+    name= request.form["name"]
+
+    ci_to_modify = Ci.query.get(ci_id)
+
+
+
+    ci_to_modify.name = name
+    ci_to_modify.description = request.form["description"]
+
     generate_image_for_ci(name, ci_id)
 
-    description = request.form["description"]
-    created_ci.name = name
-    created_ci.description = description
+    db.session.commit()
 
-    ci_set.add(copy(created_ci))
-
-    created_ci.reset_ci()
-
-    return redirect(url_for("index"))
+    return redirect(url_for("manage_ci", ci_id=ci_id))
 
 
 def update_list():
     requirement_list.clear()
+    ci_added_list = db.session.query(Ci).filter(Ci.id.in_(ci_added_id_list)).all()
     requirement_list.extend(generate_list_from_cis(ci_added_list))
 
 def start_app():

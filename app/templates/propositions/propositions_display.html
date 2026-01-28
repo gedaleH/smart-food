@@ -1,0 +1,26 @@
+ <div class="vertical-list card">
+   <strong> <span>Aliments</span> </strong>
+   <div class="vertical-grid-8">
+      {% for prop in propositions %}
+        <div class="vertical-list card2">
+          <div class="min-size center">
+            <img class="req-img" src="{{ url_for('static', filename='images/requirements/'+prop.id|string+'.png') }}"
+                 alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
+          </div>
+          <div class="vertical-list mini-gap">
+            <div class="row">
+              <span><strong>{{ prop.name}}</strong> </span>
+              <span>{{ prop.description }}</span>
+            </div>
+
+            <form action="{{ url_for('delete_proposition') }}" method="POST">
+              <input type="hidden" name="prop_id" value="{{ prop.id }}">
+              <button class="danger" type="submit" > <i class="pi pi-trash"></i>Supprimer
+              </button>
+            </form>
+
+          </div>
+        </div>
+      {% endfor %}
+   </div>
+  </div>

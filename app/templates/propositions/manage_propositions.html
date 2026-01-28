@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Gestion des aliments</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css">
 </head>
@@ -10,7 +10,7 @@
 <div class="pad">
     <div class="card vertical-list">
 
-        <strong><span>Ajouter ou supprimer des requirements</span></strong>
+        <strong><span>Ajouter ou supprimer des aliments</span></strong>
 
         <form action="{{ url_for('index') }}">
             <button class="primary" type="submit">
@@ -21,9 +21,9 @@
     </div>
 </div>
     <div class="vertical-grid-big-left">
-        {% include "requirements/requirements_display.html" %}
+        {% include "propositions/propositions_display.html" %}
 
-        {% include "requirements/create_requirement.html" %}
+        {% include "propositions/create_proposition.html" %}
     </div>
 
 </body>

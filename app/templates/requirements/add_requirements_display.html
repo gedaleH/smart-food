@@ -1,33 +1,40 @@
 <div class="vertical-list card">
-  <strong> <span>Ajouter Requirements</span> </strong>
-  {% for req in requirements_to_add %}
-  <div class="row card2">
-    <img class="req-img" src="{{ url_for('static', filename='images/requirements/'+req.id|string+'.png') }}"
-         alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
-    <div class="vertical-list ">
-      <div class="row">
-      <span><strong>{{ req.name}}</strong> </span>
-      <span>{{ req.description }}</span>
+  <strong> <span>Ajouter des ingrédients</span> </strong>
+  <div class="vertical-grid-8">
+    {% for prop in propositions %}
+      <div class="vertical-list card2">
+        <div class="min-size center">
+          <img class="req-img" src="{{ url_for('static', filename='images/requirements/'+prop.id|string+'.png') }}"
+               alt="Image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cis/ci_default.png') }}';">
+        </div>
+        <div class="vertical-list ">
+          <div class="row">
+          <span><strong>{{ prop.name}}</strong> </span>
+          <span>{{ prop.description }}</span>
+          </div>
+
+          <form class="vertical-list" action="{{ url_for('add_requirement_to_ci') }}" method="POST">
+            <input type="hidden" name="prop_id" value="{{ prop.id }}">
+            <input type="hidden" name="ci_id" value="{{ ci.id }}">
+            <input type="hidden" name="is_created" value="{{ is_created }}">
+
+            <div class="row">
+              <label for="quantity-{{ loop.index }}">Quantité</label>
+              <div class="min-size">
+                <input class="qty-input min-size" type="number" id="quantity-{{ loop.index }}" name="quantity" value="">
+              </div>
+            </div>
+            <div class="min-size">
+              <button class="success btn-add" type="submit" disabled>
+                <i class="pi pi-file-plus"></i> Ajouter
+              </button>
+            </div>
+          </form>
+
+        </div>
       </div>
-
-      <form class="vertical-list" action="{{ url_for('add_requirement_to_ci') }}" method="POST">
-        <input type="hidden" name="id" value="{{ req.id }}">
-        <input type="hidden" name="ci_id" value="{{ ci.ci_id }}">
-
-        <div class="row">
-          <label for="quantity-{{ loop.index }}">Quantity</label>
-          <input class="qty-input" type="number" id="quantity-{{ loop.index }}" name="quantity" value="">
-        </div>
-        <div class="min-size">
-          <button class="success" type="submit" disabled>
-            <i class="pi pi-file-plus"></i> Ajouter
-          </button>
-        </div>
-      </form>
-
-    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
 
 <script>
